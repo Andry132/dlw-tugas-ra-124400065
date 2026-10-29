@@ -6,8 +6,8 @@ Tugas Workshop Deep Learning — Teknik Telekomunikasi ITERA.
 
 | Peran | Nama | NIM |
 |---|---|---|
-| Ketua | Ade Raka Maulana | 124400047 |
-| Anggota | Andryansyah Amir | 124400065 |
+| Ketua | Andryansyah Amir | 124400065 |
+| Anggota | Ade Raka Maulana | 124400047 |
 
 - **Kelas:** [RA]
 - **Lokasi kelompok:** [5] — [Bandara Linate] (digit terakhir NIM terkecil)
@@ -22,7 +22,7 @@ uv run jupyter lab
 
 Buka `tugas_ablasi.ipynb`, isi `LOKASI_KELOMPOK`, lalu jalankan semua sel. Semua run tercatat di `hasil/ablasi.csv`.
 
-Perangkat yang kami pakai: [laptop CPU AMD Ryzen5 5600H dan laptop CPU Intel i5], total waktu training: [x] menit.
+Perangkat yang kami pakai: [laptop CPU AMD Ryzen5 5600H dan laptop CPU Intel i5], total waktu training: [71.3] menit.
 
 ## Ringkasan Hasil
 

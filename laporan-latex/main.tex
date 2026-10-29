@@ -32,26 +32,21 @@
 
 % Satu blok per anggota (maks. 3). Hapus blok yang tidak dipakai.
 \author{
-\IEEEauthorblockN{Nama Anggota 1}
-\IEEEauthorblockA{NIM 1221400xx\\
+\IEEEauthorblockN{Andryansyah Amir}
+\IEEEauthorblockA{NIM 124400065\\
 Teknik Telekomunikasi, ITERA\\
-email@student.itera.ac.id}
+andryansyah.124400065@student.itera.ac.id}
 \and
-\IEEEauthorblockN{Nama Anggota 2}
-\IEEEauthorblockA{NIM 1221400xx\\
+\IEEEauthorblockN{Ade Raka Maulana}
+\IEEEauthorblockA{NIM 124400047\\
 Teknik Telekomunikasi, ITERA\\
-email@student.itera.ac.id}
-\and
-\IEEEauthorblockN{Nama Anggota 3}
-\IEEEauthorblockA{NIM 1221400xx\\
-Teknik Telekomunikasi, ITERA\\
-email@student.itera.ac.id}
+ade.124400047@student.itera.ac.id}
 }
 
 \maketitle
 
 \begin{abstract}
-\petunjuk{150--200 kata. Tuliskan: masalah (prediksi trafik internet per jam), data (Telecom Italia, kotak Duomo dan lokasi kelompok), apa yang diuji (ablasi faktor apa saja, 3 seed), temuan utama dengan angka (misalnya ``GRU terbaik dengan test MAE $x \pm y$, turun $z$\,\% dari acuan''), dan satu kalimat kesimpulan.}
+Prakiraan trafik internet per jam pada tingkat sel membantu operator seluler merencanakan kapasitas jaringan. Studi ini membandingkan ANN, RNN, LSTM, dan GRU pada data Telecom Italia di kotak Duomo, Milan, dan menguji generalisasinya di Bandara Linate. Dengan studi ablasi, lima faktor wajib (panjang jendela, ukuran hidden, jumlah lapisan, \textit{learning rate}, dan kelompok fitur) serta tiga faktor pilihan (\textit{optimizer}, fungsi \textit{loss}, dan \textit{patience}) diubah satu per satu dari konfigurasi acuan, masing-masing dengan tiga seed. Pada acuan, RNN dan GRU mencapai test MAE $229{,}6 \pm 5{,}1$ dan $237{,}2 \pm 9{,}3$, jauh di bawah ANN ($309{,}9 \pm 5{,}9$) dan baseline naif terbaik ($467{,}6$). ANN paling sensitif terhadap panjang jendela (val MAE $211{,}5$ menjadi $298{,}2$ saat $W$ naik dari 6 ke 168 jam), sedangkan GRU paling diuntungkan oleh ukuran hidden besar (val MAE $188{,}7$ pada hidden 128 dibanding $207{,}5$ pada acuan). \textit{Learning rate} $10^{-4}$ dan SGD gagal konvergen dalam 300 epoch. \petunjuk{Satu kalimat tentang konfigurasi terbaik dan hasil di Linate: isi setelah Bagian C dan D selesai.} Hasil menunjukkan bahwa model rekuren lebih akurat dan lebih tahan terhadap pilihan hyperparameter daripada ANN pada data ini.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -60,13 +55,18 @@ prediksi trafik seluler, RNN, LSTM, GRU, studi ablasi
 
 % ---------------------------------------------------------------------
 \section{Pendahuluan}
-\petunjuk{Mengapa operator perlu meramal trafik per sel? Mengapa model sekuensial (RNN, LSTM \cite{hochreiter1997lstm}, GRU \cite{cho2014gru}) dibandingkan dengan ANN? Apa itu studi ablasi dan mengapa penting? Tutup dengan daftar kontribusi laporan ini (2--3 butir). Maks. 0,5 kolom.}
+Prakiraan trafik per sel membantu operator seluler merencanakan kapasitas, menghemat energi pada jam sepi, dan mendeteksi lonjakan yang tidak biasa. Trafik per jam memiliki pola harian dan mingguan yang kuat, sehingga model sekuensial seperti RNN, LSTM \cite{hochreiter1997lstm}, dan GRU \cite{cho2014gru} diharapkan lebih unggul daripada ANN yang memperlakukan jendela masukan sebagai vektor datar. Namun, membandingkan model pada satu konfigurasi saja dapat menyesatkan karena hasilnya bergantung pada pilihan hyperparameter. Studi ablasi mengubah satu faktor dalam satu waktu dari konfigurasi acuan, sehingga pengaruh tiap faktor dapat dipisahkan. Kontribusi laporan ini:
+\begin{itemize}\setlength{\itemsep}{0pt}
+  \item ablasi delapan faktor (lima wajib, tiga pilihan) pada empat model dengan tiga seed;
+  \item perbandingan konfigurasi terbaik dengan acuan dan baseline naif pada minggu test dan Natal;
+  \item uji generalisasi konfigurasi terbaik di lokasi kelompok.
+\end{itemize}
 
 % ---------------------------------------------------------------------
 \section{Data dan Metode}
 
 \subsection{Dataset}
-\petunjuk{Telecom Italia Big Data Challenge \cite{barlacchi2015milan}, versi per jam dari \cite{zhang2021fedda}: periode, resolusi, fitur. Sebutkan kotak Duomo (5060) dan lokasi kelompok (kode, nama, nomor kotak). Gambar~\ref{fig:peta} boleh dipakai.}
+Data berasal dari Telecom Italia Big Data Challenge \cite{barlacchi2015milan}, yang dipakai dalam versi agregat per jam dari \cite{zhang2021fedda}, mencakup November--Desember 2013 dengan resolusi satu jam. Setiap kotak grid Milan memiliki tiga deret waktu: aktivitas internet (\textit{net}, yang menjadi target prediksi), panggilan (\textit{call}), dan SMS (\textit{sms}). Dua fitur waktu ditambahkan, yaitu jam dan hari dalam seminggu, masing-masing dikodekan sebagai sinus dan kosinus, sehingga total tujuh fitur. Lokasi utama adalah kotak Duomo (5060). Lokasi kelompok adalah kode 5, Bandara Linate (kotak 4489); posisi lokasi tugas ditunjukkan pada Gambar~\ref{fig:peta}.
 
 \begin{figure}[t]
   \centering
@@ -76,10 +76,10 @@ prediksi trafik seluler, RNN, LSTM, GRU, studi ablasi
 \end{figure}
 
 \subsection{Pembagian Data dan Praproses}
-\petunjuk{Pembagian berdasarkan waktu (train / val / test / Natal), standarisasi dengan statistik sebelum minggu validasi, \textit{windowing}. Jelaskan mengapa data deret waktu tidak boleh diacak.}
+Data dibagi berdasarkan waktu: latih 11 November--8 Desember (28 hari, 672 sampel), validasi 9--15 Desember, test 16--22 Desember, dan minggu Natal 23--29 Desember 2013. Minggu 4--10 November hanya menjadi konteks untuk jendela awal. Data deret waktu tidak boleh diacak karena sampel yang berdekatan saling berkorelasi; pengacakan membuat model melihat masa depan saat berlatih sehingga galat tampak lebih kecil daripada yang akan terjadi ketika model benar-benar meramal. Standarisasi memakai rata-rata dan simpangan baku dari data sebelum minggu validasi saja, agar tidak ada informasi validasi dan test yang bocor ke pelatihan. Pada \textit{windowing}, setiap sampel berupa jendela $W$ jam terakhir sebagai masukan dan nilai \textit{net} jam berikutnya sebagai target (horizon 1).
 
 \subsection{Model dan Konfigurasi Acuan}
-\petunjuk{Uraikan ANN, RNN, LSTM, GRU secara singkat (tanpa menyalin slide). Sajikan konfigurasi acuan dalam Tabel~\ref{tab:acuan}.}
+ANN meratakan jendela masukan $[W, \text{fitur}]$ menjadi satu vektor, melewatkannya ke sejumlah lapisan tersembunyi dengan aktivasi ReLU, lalu satu lapisan keluaran. RNN, LSTM, dan GRU menumpuk lapisan rekuren dan mengambil \textit{hidden state} pada jam terakhir, yang kemudian dipetakan ke keluaran dengan satu lapisan linear. LSTM dan GRU menambahkan gerbang pada sel rekuren untuk mengatur informasi yang disimpan dan dilupakan. Seluruh model diimplementasikan dengan PyTorch \cite{paszke2019pytorch}. Ukuran hidden acuan dipilih agar jumlah parameter model rekuren sekitar 5,5 ribu (RNN 5.305, LSTM 5.578, GRU 5.397; ANN 6.497), sehingga perbandingan pada acuan relatif adil dalam kapasitas (Tabel~\ref{tab:acuan}).
 
 \begin{table}[t]
   \centering
@@ -102,7 +102,7 @@ prediksi trafik seluler, RNN, LSTM, GRU, studi ablasi
 \end{table}
 
 \subsection{Protokol Ablasi dan Evaluasi}
-\petunjuk{Satu faktor diubah setiap kali; daftar faktor dan nilainya (A1--A5 dan dua faktor B pilihan kalian beserta hipotesis awal). Setiap konfigurasi dilatih dengan 3 seed; dilaporkan rata-rata $\pm$ simpangan baku. Metrik: MAE, RMSE, MAPE pada skala asli. Pemilihan konfigurasi terbaik memakai val MAE. Sebutkan perangkat yang dipakai (CPU/GPU) dan total waktu training.}
+Satu faktor diubah setiap kali, faktor lain tetap pada acuan. Faktor wajib: A1 panjang jendela $W \in \{6, 12, 24, 48, 168\}$ jam, A2 ukuran hidden $\{16, 32, 64, 128\}$, A3 jumlah lapisan $\{1, 2, 3\}$, A4 \textit{learning rate} $\{10^{-4}, 10^{-3}, 10^{-2}\}$, dan A5 kelompok fitur (net; net+call+sms; net+waktu; semua). Faktor pilihan: B3 \textit{optimizer} (Adam, AdamW, SGD), B4 fungsi \textit{loss} (MSE, MAE, Huber), dan B5 \textit{patience} $\{10, 30, 60\}$. Hipotesis awal: \petunjuk{tulis hipotesis kelompokmu untuk B3, B4, B5 sebelum melihat hasil}. Setiap konfigurasi dilatih dengan tiga seed (0, 1, 2) dan dilaporkan sebagai rata-rata $\pm$ simpangan baku. Metrik adalah MAE, RMSE, dan MAPE pada skala asli (bukan skala terstandarisasi). \textit{Early stopping} memakai MSE validasi dan memulihkan bobot terbaik. Konfigurasi terbaik dipilih berdasarkan val MAE, sedangkan minggu test dan Natal hanya dipakai untuk pelaporan. Seluruh pelatihan berjalan di CPU dengan PyTorch 2.14.1, dengan total waktu pelatihan 71,3 menit.
 
 % ---------------------------------------------------------------------
 \section{Hasil}
