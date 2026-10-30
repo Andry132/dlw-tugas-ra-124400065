@@ -7,7 +7,6 @@ Tugas Workshop Deep Learning — Teknik Telekomunikasi ITERA.
 | Peran | Nama | NIM |
 |---|---|---|
 | Ketua | Andryansyah Amir | 124400065 |
-| Anggota | Ade Raka Maulana | 124400047 |
 
 - **Kelas:** [RA]
 - **Lokasi kelompok:** [5] — [Bandara Linate] (digit terakhir NIM terkecil)
